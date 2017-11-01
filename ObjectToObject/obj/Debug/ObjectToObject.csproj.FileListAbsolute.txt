@@ -1,0 +1,6 @@
+D:\code\Services\CreateQrCodeAndMergeImageService\ObjectToObject\bin\Debug\ObjectToObject.exe.config
+D:\code\Services\CreateQrCodeAndMergeImageService\ObjectToObject\bin\Debug\ObjectToObject.exe
+D:\code\Services\CreateQrCodeAndMergeImageService\ObjectToObject\bin\Debug\ObjectToObject.pdb
+D:\code\Services\CreateQrCodeAndMergeImageService\ObjectToObject\obj\Debug\ObjectToObject.exe
+D:\code\Services\CreateQrCodeAndMergeImageService\ObjectToObject\obj\Debug\ObjectToObject.pdb
+D:\code\Services\CreateQrCodeAndMergeImageService\ObjectToObject\obj\Debug\ObjectToObject.csprojResolveAssemblyReference.cache
