@@ -215,6 +215,10 @@ namespace CreateQrCodeAndMergeImage
                     x = imgSource.Width - markImg.Width;
                     y = imgSource.Height - markImg.Height;
                     break;
+                case WaterMarkLocationEnum.AdJust:
+                    x = imgSource.Width / 2 - markImg.Width / 2;
+                    y = imgSource.Height / 2 - markImg.Height / 5;
+                    break;
             }
         }
         #endregion

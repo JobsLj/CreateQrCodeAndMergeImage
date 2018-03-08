@@ -41,5 +41,10 @@
         /// 底部居左
         /// </summary>
         BottomRight = 9,
+
+        /// <summary>
+        /// 自适应宽度
+        /// </summary>
+        AdJust = 10
     }
 }
