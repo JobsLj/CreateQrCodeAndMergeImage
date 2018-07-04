@@ -1,8 +1,5 @@
-﻿using Yuanbei.Messaging.SDK;
-
-namespace CreateQrCodeAndMergeImage
+﻿namespace CreateQrCodeAndMergeImage
 {
-    [MessageEventInfo(EventName = "main-web.order.ordersuccess")]
     public class OrderSuccessEntity
     {
         /// <summary>
