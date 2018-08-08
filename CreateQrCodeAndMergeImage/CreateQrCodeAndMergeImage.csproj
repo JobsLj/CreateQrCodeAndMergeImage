@@ -38,8 +38,6 @@
     <Compile Include="CommonHelper.cs" />
     <Compile Include="FolderItem.cs" />
     <Compile Include="ImageMergeHelper.cs" />
-    <Compile Include="MessagePublisherHelper.cs" />
-    <Compile Include="OrderSuccessEntity.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QrCodeHelper.cs" />
