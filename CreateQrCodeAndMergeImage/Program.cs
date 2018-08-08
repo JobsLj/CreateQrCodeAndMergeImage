@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
-using Newtonsoft.Json;
 using ThoughtWorks.QRCode.Codec;
 using ThoughtWorks.QRCode.Codec.Data;
 
@@ -17,168 +12,75 @@ namespace CreateQrCodeAndMergeImage
         {
             Console.WriteLine("请输入要生成物料的数量！！！");
             var readCount = Console.ReadLine();
-            var result = CommonHelper.IsNumeric(readCount);
-            if (!result)
+            var checkCount = CommonHelper.IsNumeric(readCount);
+            if (!checkCount)
             {
                 Console.WriteLine("请输入正确数量");
+                return;
             }
-            else
+
+            Console.WriteLine("请输入生成的二维码类型（1-微信会员卡 2-收款）！！！");
+            var qrcodeType = Console.ReadLine();
+            var checkType = CommonHelper.IsNumeric(qrcodeType);
+            if (!checkType)
             {
-                var createNum = Convert.ToInt32(readCount);
-                const string qrEncodingType = "BYTE";
-                const string createLevel = "H";
-                const int version = 8;
-                const int scale = 12;
-
-                var showurlArr = GetShortUrl();
-                for (int i = 0; i < createNum; i++)
-                {
-                    var jumpAddress = showurlArr[i];
-
-                    //1.生成二维码图片
-                    //var qrCodeFilePath = CreateCode_Choose(jumpAddress, qrEncodingType, createLevel, version, scale);
-                    var qrCodeFilePath = QrCodeHelper.CreateImage(jumpAddress,24);
-
-                    //2.拼接二维码图片，生成物料图片
-                    var waterMark = WaterMarkImage(qrCodeFilePath);
-                    DIVWaterMark(waterMark, i);
-                    Console.WriteLine("第{0}合成图片成功!", i + 1);
-                }
+                Console.WriteLine("请输入要生成的正确的二维码类型（1-微信会员卡 2-收款）");
+                return;
             }
 
+            var createNum = Convert.ToInt32(readCount);
+            var type = Convert.ToInt32(qrcodeType);
+            var showurlArr = GetShortUrls();
+            for (int i = 0; i < createNum; i++)
+            {
+                var jumpAddress = showurlArr[i];
 
-            //var imgUrl = GetUpYunImgUrl();
-            //var testTemp = imgUrl;
+                //1.生成二维码图片
 
-            //var orderSuccessEntity = new OrderSuccessEntity
-            //{
-            //    AccountId = 397,
-            //    ProductName = "高级版一年",
-            //    OrderId = "2343435",
-            //    RealPayMoney = 23434,
-            //    OrderTypeId = 4,
-            //    Phone = "15377541070"
-            //};
-            //var sendHelper = new MessagePublisherHelper();
-            //var result = sendHelper.SendMessage(orderSuccessEntity);
+                //一、高精度二维码
+                //var qrCodeFilePath = GetHighLevelQrcode(jumpAddress);
 
-            //Console.WriteLine(result);
+                //二、普通二维码
+                var qrCodeFilePath = GetCommonLeverQrCode(jumpAddress);
 
-            //var calculateResult = 1 | 2;
-            //Console.WriteLine(calculateResult);
-
-            //var onFeeCount = 0;
-            //var fiveFeeMaterialCount = 0;
-            //var eightMaterialCoupon = 0;
-            //var alllifeCount = 0;
-            //var redPacketCount = 0;
-            //var t1Count = 0;
-            //var hunderFlowCount = 0;
-            //var luckJoinCount = 0;
-
-            //var requestUrl = "http://192.168.20.227:8092/v0/rewards/luckdraw";
-            //var requestHeader = new Dictionary<string, string>
-            //{
-            //    {
-            //        "token",
-            //        "D196EE7AC3C620B6EABA08B9282FDFE5EDD0147FF2EBDDFA5E50EE2F39F5F2D60D96DD812ED240A7FE7E1140D7985340"
-            //    }
-            //};
-            //var testCount = 5000;
-            //for (int i = 0; i <= testCount; i++)
-            //{
-            //    var doResult = CommonHelper.RestPost(requestUrl, null, null, requestHeader);
-            //    if (!string.IsNullOrWhiteSpace(doResult))
-            //    {
-            //        var luckDrawObj = JsonConvert.DeserializeObject<ResponseModel>(doResult);
-            //        if (luckDrawObj.Code == 0)
-            //        {
-            //            var luckItemId = JsonConvert.DeserializeObject<LuckDrawResult>(luckDrawObj.Data.ToString())
-            //                .LuckDrawItemID;
-            //            if (luckItemId == 1)
-            //            {
-            //                onFeeCount = onFeeCount + 1;
-            //            }
-            //            else if (luckItemId == 2)
-            //            {
-            //                fiveFeeMaterialCount = fiveFeeMaterialCount + 1;
-            //            }
-            //            else if (luckItemId == 3)
-            //            {
-            //                eightMaterialCoupon = eightMaterialCoupon + 1;
-            //            }
-            //            else if (luckItemId == 4)
-            //            {
-            //                alllifeCount = alllifeCount + 1;
-            //            }
-            //            else if (luckItemId == 5)
-            //            {
-            //                redPacketCount = redPacketCount + 1;
-            //            }
-            //            else if (luckItemId == 6)
-            //            {
-            //                t1Count = t1Count + 1;
-            //            }
-            //            else if (luckItemId == 7)
-            //            {
-            //                hunderFlowCount = hunderFlowCount + 1;
-            //            }
-            //            else if (luckItemId == 8)
-            //            {
-            //                luckJoinCount = luckJoinCount + 1;
-            //            }
-
-            //            var luckItemName = JsonConvert.DeserializeObject<LuckDrawResult>(luckDrawObj.Data.ToString())
-            //                .LuckDrawItemName;
-            //            Console.WriteLine("恭喜您，中奖为：{0}", luckItemName);
-            //        }
-            //    }
-            //}
-
-            //Console.WriteLine("1元话费满减券中奖次数：{0}",onFeeCount);
-            //Console.WriteLine("5元硬件满减券中奖次数：{0}", fiveFeeMaterialCount);
-            //Console.WriteLine("V1商米88元满减券中奖次数：{0}", eightMaterialCoupon);
-            //Console.WriteLine("终身高级版中奖次数：{0}", alllifeCount);
-            //Console.WriteLine("1111元现金红包中奖次数：{0}", redPacketCount);
-            //Console.WriteLine("商米T1一体机中奖次数：{0}", t1Count);
-            //Console.WriteLine("100M全国流量中奖次数：{0}", hunderFlowCount);
-            //Console.WriteLine("感谢参与中奖次数：{0}", luckJoinCount);
-
+                //2.拼接二维码图片，生成物料图片
+                var backgroundImgName = "background.png";
+                var waterMark = WaterMarkImage(qrCodeFilePath,type);
+                if (type == (int)QrCodeType.Colllection)
+                {
+                    backgroundImgName = "background-money.jpg";
+                }
+                DIVWaterMark(waterMark, backgroundImgName, i);
+                Console.WriteLine("第{0}合成图片成功!", i + 1);
+            }
 
             Console.ReadLine();
         }
 
-        public class LuckDrawResult
+        public enum QrCodeType
         {
-            /// <summary>
-            /// 奖品id
-            /// </summary>
-            public int LuckDrawItemID { get; set; }
+            //微信会员卡
+            WechatCard = 1,
 
-            /// <summary>
-            /// 奖品名称
-            /// </summary>
-            public string LuckDrawItemName { get; set; }
+            //收款
+            Colllection = 2
         }
 
-        public class ResponseModel
+        public static string GetHighLevelQrcode(string url)
         {
-            /// <summary>
-            /// 错误代码
-            /// </summary>
-            public int Code { get; set; }
-
-            /// <summary>
-            /// 错误信息
-            /// </summary>
-            public string Message { get; set; }
-
-            /// <summary>
-            /// 返回的数据实体
-            /// </summary>
-            public object Data { get; set; }
+            const string qrEncodingType = "BYTE";
+            const string createLevel = "H";
+            const int version = 8;
+            const int scale = 12;
+            var qrCodeFilePath = CreateCode_Choose(url, qrEncodingType, createLevel, version, scale);
+            return qrCodeFilePath;
         }
 
+        public static string GetCommonLeverQrCode(string url)
+        {
+            var qrCodeFilePath = QrCodeHelper.CreateImage(url, 24);
+            return qrCodeFilePath;
+        }
 
         //生成二维码方法（简单）
         private static void CreateCode_Simple(string nr)
@@ -316,13 +218,26 @@ namespace CreateQrCodeAndMergeImage
         /// 图片水印预设
         /// </summary>
         /// <returns></returns>
-        private static WaterMark WaterMarkImage(string filePath)
+        private static WaterMark WaterMarkImage(string filePath,int type)
         {
+            WaterMarkLocationEnum location;
+            switch (type)
+            {
+                case (int)QrCodeType.WechatCard:
+                    location = WaterMarkLocationEnum.CenterCenter;
+                    break;
+                case (int)QrCodeType.Colllection:
+                    location = WaterMarkLocationEnum.AdJust;
+                    break;
+                default:
+                    location = WaterMarkLocationEnum.CenterCenter;
+                    break;
+            }
             var waterMark = new WaterMark
             {
                 WaterMarkType = WaterMarkTypeEnum.Image,
                 ImgPath = filePath,
-                WaterMarkLocation = WaterMarkLocationEnum.CenterCenter,
+                WaterMarkLocation = location,
                 Transparency = 1f
             };
             return waterMark;
@@ -336,13 +251,14 @@ namespace CreateQrCodeAndMergeImage
         /// 单个水印操作
         /// </summary>
         /// <param name="waterMark"></param>
+        /// <param name="backgroundImgName"></param>
         /// <param name="index"></param>
-        private static void DIVWaterMark(WaterMark waterMark, int index = 0)
+        private static void DIVWaterMark(WaterMark waterMark, string backgroundImgName, int index = 0)
         {
             #region 必须参数获取
 
             //图片路径
-            var filePath = AppDomain.CurrentDomain.BaseDirectory + @"\Pictures\background.png";
+            var filePath = AppDomain.CurrentDomain.BaseDirectory + @"\Pictures\" + backgroundImgName;
             //文件名
             string fileName = Path.GetFileNameWithoutExtension(filePath);
             //图片所处目录
@@ -401,511 +317,511 @@ namespace CreateQrCodeAndMergeImage
 
 
 
-        public static string[] GetShortUrl()
+        public static string[] GetShortUrls()
         {
 
             return new[]
             {
-"http://i2oo.cn/sxhVbu",
-"http://i2oo.cn/syY7tE",
-"http://i2oo.cn/hrp7wb",
-"http://i2oo.cn/hpWTSA",
-"http://i2oo.cn/hszSjH",
-"http://i2oo.cn/hn7Srd",
-"http://i2oo.cn/haxRHy",
-"http://i2oo.cn/h3SQ2K",
-"http://i2oo.cn/h9vPiC",
-"http://i2oo.cn/hBQP9r",
-"http://i2oo.cn/hUt4RM",
-"http://i2oo.cn/hN4M66",
-"http://i2oo.cn/hEiLzs",
-"http://i2oo.cn/hHLLGP",
-"http://i2oo.cn/hJFKYj",
-"http://i2oo.cn/hLJJqn",
-"http://i2oo.cn/hM8JfR",
-"http://i2oo.cn/hPGHPm",
-"http://i2oo.cn/hQkGgf",
-"http://i2oo.cn/hSNExT",
-"http://i2oo.cn/hT5ENo",
-"http://i2oo.cn/hVUNX9",
-"http://i2oo.cn/hWgDoV",
-"http://i2oo.cn/hYwDnq",
-"http://i2oo.cn/hZeU4B",
-"http://i2oo.cn/hb3BeX",
-"http://i2oo.cn/hccwv1",
-"http://i2oo.cn/heawDD",
-"http://i2oo.cn/hC29VZ",
-"http://i2oo.cn/h6h3mu",
-"http://i2oo.cn/h5Y3hE",
-"http://i2oo.cn/hkpfLb",
-"http://i2oo.cn/hmWacA",
-"http://i2oo.cn/h8znuH",
-"http://i2oo.cn/hF7nBd",
-"http://i2oo.cn/hqxhTy",
-"http://i2oo.cn/h1SskK",
-"http://i2oo.cn/htvspC",
-"http://i2oo.cn/hvQpKr",
-"http://i2oo.cn/hAtrbM",
-"http://i2oo.cn/hyMz16",
-"http://i2oo.cn/hzqzws",
-"http://i2oo.cn/npKySP",
-"http://i2oo.cn/nsox5j",
-"http://i2oo.cn/nnHxrn",
-"http://i2oo.cn/namAHR",
-"http://i2oo.cn/n3EvZm",
-"http://i2oo.cn/n9juif",
-"http://i2oo.cn/nBDu3T",
-"http://i2oo.cn/nU6tQo",
-"http://i2oo.cn/nNB169",
-"http://i2oo.cn/nECiyV",
-"http://i2oo.cn/nH9iEq",
-"http://i2oo.cn/nJdqYB",
-"http://i2oo.cn/nLfFFX",
-"http://i2oo.cn/nMbFa1",
-"http://i2oo.cn/nPnoPD",
-"http://i2oo.cn/nQZ8CZ",
-"http://i2oo.cn/nSsmAu",
-"http://i2oo.cn/nTXmNE",
-"http://i2oo.cn/nVrkWb",
-"http://i2oo.cn/nWVj8A",
-"http://i2oo.cn/nXyjnH",
-"http://i2oo.cn/nZT5Md",
-"http://i2oo.cn/n2A6dy",
-"http://i2oo.cn/ncRgvK",
-"http://i2oo.cn/ndugUC",
-"http://i2oo.cn/nCPCVr",
-"http://i2oo.cn/ng1emM",
-"http://i2oo.cn/n5Mes6",
-"http://i2oo.cn/njqdLs",
-"http://i2oo.cn/nmKccP",
-"http://i2oo.cn/n8obtj",
-"http://i2oo.cn/nFHbBn",
-"http://i2oo.cn/nqm2TR",
-"http://i2oo.cn/n1EZjm",
-"http://i2oo.cn/ntjZpf",
-"http://i2oo.cn/nvDYJT",
-"http://i2oo.cn/nA6X2o",
-"http://i2oo.cn/nyBW19",
-"http://i2oo.cn/nzCW9V",
-"http://i2oo.cn/ap9VRq",
-"http://i2oo.cn/asd75B",
-"http://i2oo.cn/anfTzX",
-"http://i2oo.cn/aabTG1",
-"http://i2oo.cn/a3nSZD",
-"http://i2oo.cn/a9ZRqZ",
-"http://i2oo.cn/aBsRfu",
-"http://i2oo.cn/aUXQQE",
-"http://i2oo.cn/aNrPgb",
-"http://i2oo.cn/aEV4xA",
-"http://i2oo.cn/aGy4EH",
-"http://i2oo.cn/aJTMXd",
-"http://i2oo.cn/aKALoy",
-"http://i2oo.cn/aMRLaK",
-"http://i2oo.cn/a4uK4C",
-"http://i2oo.cn/aQPJCr",
-"http://i2oo.cn/aR1HAM",
-"http://i2oo.cn/aTMHD6",
-"http://i2oo.cn/a7qGWs",
-"http://i2oo.cn/aWKE8P",
-"http://i2oo.cn/aXoEhj",
-"http://i2oo.cn/aZHNMn",
-"http://i2oo.cn/a2mDdR",
-"http://i2oo.cn/acEUum",
-"http://i2oo.cn/adjUUf",
-"http://i2oo.cn/aCDB7T",
-"http://i2oo.cn/ag6wko",
-"http://i2oo.cn/a5Bws9",
-"http://i2oo.cn/ajC9KV",
-"http://i2oo.cn/am93bq",
-"http://i2oo.cn/a8dftB",
-"http://i2oo.cn/aFffwX",
-"http://i2oo.cn/aqbaS1",
-"http://i2oo.cn/a1nnjD",
-"http://i2oo.cn/atZnrZ",
-"http://i2oo.cn/avshHu",
-"http://i2oo.cn/aAXs2E",
-"http://i2oo.cn/ayrpib",
-"http://i2oo.cn/azVp3A",
-"http://i2oo.cn/fryrRH",
-"http://i2oo.cn/fsSz6d",
-"http://i2oo.cn/fhvyyy",
-"http://i2oo.cn/faQyGK",
-"http://i2oo.cn/fftxYC",
-"http://i2oo.cn/f94Aqr",
-"http://i2oo.cn/fwiAfM",
-"http://i2oo.cn/fULvP6",
-"http://i2oo.cn/fDFugs",
-"http://i2oo.cn/fEJtxP",
-"http://i2oo.cn/fG8tNj",
-"http://i2oo.cn/fJG1Xn",
-"http://i2oo.cn/fKkioR",
-"http://i2oo.cn/fMNinm",
-"http://i2oo.cn/f45q4f",
-"http://i2oo.cn/fQUFeT",
-"http://i2oo.cn/fRgovo",
-"http://i2oo.cn/fTwoD9",
-"http://i2oo.cn/f7e8VV",
-"http://i2oo.cn/fW3mmq",
-"http://i2oo.cn/fXcmhB",
-"http://i2oo.cn/r2EgB",
-"http://i2oo.cn/shNxX",
-"http://i2oo.cn/hYNN1",
-"http://i2oo.cn/apDXD",
-"http://i2oo.cn/fWUoZ",
-"http://i2oo.cn/3zUnu",
-"http://i2oo.cn/w7B4E",
-"http://i2oo.cn/Bxweb",
-"http://i2oo.cn/DS9vA",
-"http://i2oo.cn/Nv9DH",
-"http://i2oo.cn/GQ3Vd",
-"http://i2oo.cn/Htfmy",
-"http://i2oo.cn/K4fhK",
-"http://i2oo.cn/LiaLC",
-"http://i2oo.cn/4Lndr",
-"http://i2oo.cn/PFhuM",
-"http://i2oo.cn/RJhB6",
-"http://i2oo.cn/S8s7s",
-"http://i2oo.cn/7GpkP",
-"http://i2oo.cn/Vkppj",
-"http://i2oo.cn/XNrKn",
-"http://i2oo.cn/Y6zbR",
-"http://i2oo.cn/2By1m",
-"http://i2oo.cn/bCywf",
-"http://i2oo.cn/d9xST",
-"http://i2oo.cn/edA5o",
-"http://i2oo.cn/gfAr9",
-"http://i2oo.cn/6bvHV",
-"http://i2oo.cn/jnuZq",
-"http://i2oo.cn/kZtiB",
-"http://i2oo.cn/8st3X",
-"http://i2oo.cn/oX1Q1",
-"http://i2oo.cn/qri6D",
-"http://i2oo.cn/iVqyZ",
-"http://i2oo.cn/1yqEu",
-"http://i2oo.cn/uTFYE",
-"http://i2oo.cn/vAoFb",
-"http://i2oo.cn/xRoaA",
-"http://i2oo.cn/yu8PH",
-"http://i2oo.cn/prPmCd",
-"http://i2oo.cn/pp1kAy",
-"http://i2oo.cn/phMkNK",
-"http://i2oo.cn/pnqjWC",
-"http://i2oo.cn/pfK5or",
-"http://i2oo.cn/p3o5nM",
-"http://i2oo.cn/pwH6M6",
-"http://i2oo.cn/pBmges",
-"http://i2oo.cn/pDECvP",
-"http://i2oo.cn/pNjCUj",
-"http://i2oo.cn/pGDeVn",
-"http://i2oo.cn/pH6dmR",
-"http://i2oo.cn/pKBdsm",
-"http://i2oo.cn/pLCcLf",
-"http://i2oo.cn/p49bcT",
-"http://i2oo.cn/pPd2to",
-"http://i2oo.cn/pRf2B9",
-"http://i2oo.cn/pSbZTV",
-"http://i2oo.cn/p7nYjq",
-"http://i2oo.cn/pVZYpB",
-"http://i2oo.cn/pXsXJX",
-"http://i2oo.cn/pYXW21",
-"http://i2oo.cn/p2rV1D",
-"http://i2oo.cn/pbVV9Z",
-"http://i2oo.cn/pcy7Ru",
-"http://i2oo.cn/peTT5E",
-"http://i2oo.cn/pCASzb",
-"http://i2oo.cn/p6RSGA",
-"http://i2oo.cn/p5uRZH",
-"http://i2oo.cn/pkPQqd",
-"http://i2oo.cn/pm1Qfy",
-"http://i2oo.cn/poMPQK",
-"http://i2oo.cn/pFq4gC",
-"http://i2oo.cn/piKMyr",
-"http://i2oo.cn/p1oMEM",
-"http://i2oo.cn/puHLX6",
-"http://i2oo.cn/pvmKFs",
-"http://i2oo.cn/pxEKaP",
-"http://i2oo.cn/pyjJ4j",
-"http://i2oo.cn/srDHCn",
-"http://i2oo.cn/sp6GAR",
-"http://i2oo.cn/shBGDm",
-"http://i2oo.cn/snCEWf",
-"http://i2oo.cn/sf9N8T",
-"http://i2oo.cn/s3dNho",
-"http://i2oo.cn/swfDM9",
-"http://i2oo.cn/sBbUdV",
-"http://i2oo.cn/sDnBuq",
-"http://i2oo.cn/sNZBUB",
-"http://i2oo.cn/sGsw7X",
-"http://i2oo.cn/sHX9k1",
-"http://i2oo.cn/sKr9sD",
-"http://i2oo.cn/sLV3KZ",
-"http://i2oo.cn/sMyfbu",
-"http://i2oo.cn/sPTatE",
-"http://i2oo.cn/sQAawb",
-"http://i2oo.cn/sSRnSA",
-"http://i2oo.cn/sTuhjH",
-"http://i2oo.cn/sVPhrd",
-"http://i2oo.cn/sW1sHy",
-"http://i2oo.cn/sYMp2K",
-"http://i2oo.cn/sZqriC",
-"http://i2oo.cn/sbKr9r",
-"http://i2oo.cn/sc8zRM",
-"http://i2oo.cn/seGy66",
-"http://i2oo.cn/sCkxzs",
-"http://i2oo.cn/s6NxGP",
-"http://i2oo.cn/s55AYj",
-"http://i2oo.cn/skUvqn",
-"http://i2oo.cn/smgvfR",
-"http://i2oo.cn/sowuPm",
-"http://i2oo.cn/sFetgf",
-"http://i2oo.cn/si31xT",
-"http://i2oo.cn/s1c1No",
-"http://i2oo.cn/suaiX9",
-"http://i2oo.cn/sv2qoV",
-"http://i2oo.cn/sxhqnq",
-"http://i2oo.cn/syYF4B",
-"http://i2oo.cn/hrpoeX",
-"http://i2oo.cn/hpW8v1",
-"http://i2oo.cn/hsz8DD",
-"http://i2oo.cn/hn7mVZ",
-"http://i2oo.cn/haxkmu",
-"http://i2oo.cn/h3SkhE",
-"http://i2oo.cn/h9vjLb",
-"http://i2oo.cn/hBQ5cA",
-"http://i2oo.cn/hUt6uH",
-"http://i2oo.cn/hN46Bd",
-"http://i2oo.cn/hEigTy",
-"http://i2oo.cn/hHLCkK",
-"http://i2oo.cn/hJFCpC",
-"http://i2oo.cn/hLJeKr",
-"http://i2oo.cn/hM8dbM",
-"http://i2oo.cn/hPGc16",
-"http://i2oo.cn/hQkcws",
-"http://i2oo.cn/hSNbSP",
-"http://i2oo.cn/hT525j",
-"http://i2oo.cn/hVU2rn",
-"http://i2oo.cn/hWgZHR",
-"http://i2oo.cn/hYwYZm",
-"http://i2oo.cn/hZeXif",
-"http://i2oo.cn/hb3X3T",
-"http://i2oo.cn/hccWQo",
-"http://i2oo.cn/heaV69",
-"http://i2oo.cn/hC27yV",
-"http://i2oo.cn/h6h7Eq",
-"http://i2oo.cn/h5YTYB",
-"http://i2oo.cn/hkpSFX",
-"http://i2oo.cn/hmWSa1",
-"http://i2oo.cn/h8zRPD",
-"http://i2oo.cn/hF7QCZ",
-"http://i2oo.cn/hqxPAu",
-"http://i2oo.cn/h1SPNE",
-"http://i2oo.cn/htv4Wb",
-"http://i2oo.cn/hvQM8A",
-"http://i2oo.cn/hAtMnH",
-"http://i2oo.cn/hy4LMd",
-"http://i2oo.cn/hziKdy",
-"http://i2oo.cn/npLJvK",
-"http://i2oo.cn/nsFJUC",
-"http://i2oo.cn/nnJHVr",
-"http://i2oo.cn/na8GmM",
-"http://i2oo.cn/n3GGs6",
-"http://i2oo.cn/n9kELs",
-"http://i2oo.cn/nBNNcP",
-"http://i2oo.cn/nU5Dtj",
-"http://i2oo.cn/nNUDBn",
-"http://i2oo.cn/nEgUTR",
-"http://i2oo.cn/nHwBjm",
-"http://i2oo.cn/nJeBpf",
-"http://i2oo.cn/nL3wJT",
-"http://i2oo.cn/nMc92o",
-"http://i2oo.cn/nPa319",
-"http://i2oo.cn/nQ239V",
-"http://i2oo.cn/nShfRq",
-"http://i2oo.cn/nTYa5B",
-"http://i2oo.cn/nVpnzX",
-"http://i2oo.cn/nWWnG1",
-"http://i2oo.cn/nXzhZD",
-"http://i2oo.cn/nZ7sqZ",
-"http://i2oo.cn/n2xsfu",
-"http://i2oo.cn/ncSpQE",
-"http://i2oo.cn/ndvrgb",
-"http://i2oo.cn/nCPzxA",
-"http://i2oo.cn/ng1zEH",
-"http://i2oo.cn/n5MyXd",
-"http://i2oo.cn/njqxoy",
-"http://i2oo.cn/nmKxaK",
-"http://i2oo.cn/n8oA4C",
-"http://i2oo.cn/nFHvCr",
-"http://i2oo.cn/nqmuAM",
-"http://i2oo.cn/n1EuD6",
-"http://i2oo.cn/ntjtWs",
-"http://i2oo.cn/nvD18P",
-"http://i2oo.cn/nA61hj",
-"http://i2oo.cn/nyBiMn",
-"http://i2oo.cn/nzCqdR",
-"http://i2oo.cn/ap9Fum",
-"http://i2oo.cn/asdFUf",
-"http://i2oo.cn/anfo7T",
-"http://i2oo.cn/aab8ko",
-"http://i2oo.cn/a3n8s9",
-"http://i2oo.cn/a9ZmKV",
-"http://i2oo.cn/aBskbq",
-"http://i2oo.cn/aUXjtB",
-"http://i2oo.cn/aNrjwX",
-"http://i2oo.cn/aEV5S1",
-"http://i2oo.cn/aGy6jD",
-"http://i2oo.cn/aJT6rZ",
-"http://i2oo.cn/aKAgHu",
-"http://i2oo.cn/aMRC2E",
-"http://i2oo.cn/a4ueib",
-"http://i2oo.cn/aQPe3A",
-"http://i2oo.cn/aR1dRH",
-"http://i2oo.cn/aTMc6d",
-"http://i2oo.cn/a7qbyy",
-"http://i2oo.cn/aWKbGK",
-"http://i2oo.cn/aXo2YC",
-"http://i2oo.cn/aZHZqr",
-"http://i2oo.cn/a2mZfM",
-"http://i2oo.cn/acEYP6",
-"http://i2oo.cn/adjXgs",
-"http://i2oo.cn/aCDWxP",
-"http://i2oo.cn/ag6WNj",
-"http://i2oo.cn/a5BVXn",
-"http://i2oo.cn/ajC7oR",
-"http://i2oo.cn/am97nm",
-"http://i2oo.cn/a8dT4f",
-"http://i2oo.cn/aFfSeT",
-"http://i2oo.cn/aqbRvo",
-"http://i2oo.cn/a1nRD9",
-"http://i2oo.cn/atZQVV",
-"http://i2oo.cn/avsPmq",
-"http://i2oo.cn/aAXPhB",
-"http://i2oo.cn/ayr4LX",
-"http://i2oo.cn/azVMc1",
-"http://i2oo.cn/fryLuD",
-"http://i2oo.cn/fsTLBZ",
-"http://i2oo.cn/fhAKTu",
-"http://i2oo.cn/faRJkE",
-"http://i2oo.cn/ffuJpb",
-"http://i2oo.cn/f9PHJA",
-"http://i2oo.cn/fw1GbH",
-"http://i2oo.cn/fUME1d",
-"http://i2oo.cn/fDqE9y",
-"http://i2oo.cn/fEKNSK",
-"http://i2oo.cn/fGoD5C",
-"http://i2oo.cn/fJHDrr",
-"http://i2oo.cn/fKmUHM",
-"http://i2oo.cn/fMEBZ6",
-"http://i2oo.cn/f4jwis",
-"http://i2oo.cn/fQDw3P",
-"http://i2oo.cn/fR69Qj",
-"http://i2oo.cn/fTB36n",
-"http://i2oo.cn/f7CfyR",
-"http://i2oo.cn/fW9fEm",
-"http://i2oo.cn/fXdaYf",
-"http://i2oo.cn/r2bwf",
-"http://i2oo.cn/sh2ST",
-"http://i2oo.cn/hYZ5o",
-"http://i2oo.cn/apZr9",
-"http://i2oo.cn/fWYHV",
-"http://i2oo.cn/3zXZq",
-"http://i2oo.cn/w7WiB",
-"http://i2oo.cn/BxW3X",
-"http://i2oo.cn/DSVQ1",
-"http://i2oo.cn/Nv76D",
-"http://i2oo.cn/GQTyZ",
-"http://i2oo.cn/HtTEu",
-"http://i2oo.cn/K4SYE",
-"http://i2oo.cn/LiRFb",
-"http://i2oo.cn/4LRaA",
-"http://i2oo.cn/PFQPH",
-"http://i2oo.cn/RJPCd",
-"http://i2oo.cn/S84Ay",
-"http://i2oo.cn/7G4NK",
-"http://i2oo.cn/VkMWC",
-"http://i2oo.cn/XNLor",
-"http://i2oo.cn/Y5LnM",
-"http://i2oo.cn/2UKM6",
-"http://i2oo.cn/bgJes",
-"http://i2oo.cn/dwHvP",
-"http://i2oo.cn/eeHUj",
-"http://i2oo.cn/g3GVn",
-"http://i2oo.cn/6cEmR",
-"http://i2oo.cn/jaEsm",
-"http://i2oo.cn/k2NLf",
-"http://i2oo.cn/8hDcT",
-"http://i2oo.cn/oYUto",
-"http://i2oo.cn/qpUB9",
-"http://i2oo.cn/iWBTV",
-"http://i2oo.cn/1zwjq",
-"http://i2oo.cn/u7wpB",
-"http://i2oo.cn/vx9JX",
-"http://i2oo.cn/xS321",
-"http://i2oo.cn/yvf1D",
-"http://i2oo.cn/prQf9Z",
-"http://i2oo.cn/pptaRu",
-"http://i2oo.cn/ph4n5E",
-"http://i2oo.cn/pnihzb",
-"http://i2oo.cn/pfLhGA",
-"http://i2oo.cn/p3FsZH",
-"http://i2oo.cn/pwJpqd",
-"http://i2oo.cn/pB8pfy",
-"http://i2oo.cn/pDGrQK",
-"http://i2oo.cn/pNjzgC",
-"http://i2oo.cn/pGDyyr",
-"http://i2oo.cn/pH6yEM",
-"http://i2oo.cn/pKBxX6",
-"http://i2oo.cn/pLCAFs",
-"http://i2oo.cn/p49AaP",
-"http://i2oo.cn/pPdv4j",
-"http://i2oo.cn/pRfuCn",
-"http://i2oo.cn/pSbtAR",
-"http://i2oo.cn/p7ntDm",
-"http://i2oo.cn/pVZ1Wf",
-"http://i2oo.cn/pXsi8T",
-"http://i2oo.cn/pYXiho",
-"http://i2oo.cn/p2rqM9",
-"http://i2oo.cn/pbVFdV",
-"http://i2oo.cn/pcyouq",
-"http://i2oo.cn/peToUB",
-"http://i2oo.cn/pCA87X",
-"http://i2oo.cn/p6Rmk1",
-"http://i2oo.cn/p5umsD",
-"http://i2oo.cn/pkPkKZ",
-"http://i2oo.cn/pm1jbu",
-"http://i2oo.cn/poM5tE",
-"http://i2oo.cn/pFq5wb",
-"http://i2oo.cn/piK6SA",
-"http://i2oo.cn/p1ogjH",
-"http://i2oo.cn/puHgrd",
-"http://i2oo.cn/pvmCHy",
-"http://i2oo.cn/pxEe2K",
-"http://i2oo.cn/pyjdiC",
-"http://i2oo.cn/srDd9r",
-"http://i2oo.cn/sp6cRM",
-"http://i2oo.cn/shBb66",
-"http://i2oo.cn/snC2zs",
-"http://i2oo.cn/sf92GP",
-"http://i2oo.cn/s3dZYj",
-"http://i2oo.cn/swfYqn",
-"http://i2oo.cn/sBbYfR",
-"http://i2oo.cn/sDnXPm",
-"http://i2oo.cn/sNZWgf",
-"http://i2oo.cn/sGsVxT",
-"http://i2oo.cn/sHXVNo",
-"http://i2oo.cn/sKr7X9",
-"http://i2oo.cn/sLVToV",
-"http://i2oo.cn/sMyTnq",
-"http://i2oo.cn/sPTS4B",
-"http://i2oo.cn/sQAReX",
-"http://i2oo.cn/sSRQv1",
-"http://i2oo.cn/sTuQDD",
-"http://i2oo.cn/sVPPVZ",
-"http://i2oo.cn/sW14mu",
-"http://i2oo.cn/sYM4hE",
-"http://i2oo.cn/sZqMLb",
-"http://i2oo.cn/sbKLcA",
-"http://i2oo.cn/scoKuH"
+"http://i2oo.cn/sBCu4X",
+"http://i2oo.cn/sD9te1",
+"http://i2oo.cn/sNd1AD",
+"http://i2oo.cn/sGf1DZ",
+"http://i2oo.cn/sHbiVu",
+"http://i2oo.cn/sKnq8E",
+"http://i2oo.cn/sLZqhb",
+"http://i2oo.cn/s4sFLA",
+"http://i2oo.cn/sPXodH",
+"http://i2oo.cn/sRr8ud",
+"http://i2oo.cn/sSV8By",
+"http://i2oo.cn/sTym7K",
+"http://i2oo.cn/sVTkkC",
+"http://i2oo.cn/sWAksr",
+"http://i2oo.cn/sYRjKM",
+"http://i2oo.cn/sZu5b6",
+"http://i2oo.cn/sbP6ts",
+"http://i2oo.cn/sc16wP",
+"http://i2oo.cn/seMgSj",
+"http://i2oo.cn/sCqCjn",
+"http://i2oo.cn/s6KCrR",
+"http://i2oo.cn/s5oeHm",
+"http://i2oo.cn/skHd2f",
+"http://i2oo.cn/smmciT",
+"http://i2oo.cn/soEc3o",
+"http://i2oo.cn/sFjbR9",
+"http://i2oo.cn/siD26V",
+"http://i2oo.cn/s16Zyq",
+"http://i2oo.cn/suBZGB",
+"http://i2oo.cn/svCYYX",
+"http://i2oo.cn/sx9XF1",
+"http://i2oo.cn/sydXfD",
+"http://i2oo.cn/hrfWPZ",
+"http://i2oo.cn/hpbVCu",
+"http://i2oo.cn/hhn7xE",
+"http://i2oo.cn/hnZ7Nb",
+"http://i2oo.cn/hfsTWA",
+"http://i2oo.cn/h3XSoH",
+"http://i2oo.cn/hwrSnd",
+"http://i2oo.cn/hBVRMy",
+"http://i2oo.cn/hUyQeK",
+"http://i2oo.cn/hNTPvC",
+"http://i2oo.cn/hEAPDr",
+"http://i2oo.cn/hHR4VM",
+"http://i2oo.cn/hJuMm6",
+"http://i2oo.cn/hLPMhs",
+"http://i2oo.cn/hM1LLP",
+"http://i2oo.cn/hPMKcj",
+"http://i2oo.cn/hQqJun",
+"http://i2oo.cn/hSKJBR",
+"http://i2oo.cn/hToHTm",
+"http://i2oo.cn/hVHGkf",
+"http://i2oo.cn/hWmGpT",
+"http://i2oo.cn/hYEEJo",
+"http://i2oo.cn/hZjNb9",
+"http://i2oo.cn/hbDD1V",
+"http://i2oo.cn/hc6D9q",
+"http://i2oo.cn/heBUSB",
+"http://i2oo.cn/hCCB5X",
+"http://i2oo.cn/h69wz1",
+"http://i2oo.cn/h5dwHD",
+"http://i2oo.cn/hkf9ZZ",
+"http://i2oo.cn/hmb3qu",
+"http://i2oo.cn/hon33E",
+"http://i2oo.cn/hFZfQb",
+"http://i2oo.cn/hisagA",
+"http://i2oo.cn/h1XnyH",
+"http://i2oo.cn/hurnEd",
+"http://i2oo.cn/hvVhXy",
+"http://i2oo.cn/hAysFK",
+"http://i2oo.cn/hyTsaC",
+"http://i2oo.cn/hzApPr",
+"http://i2oo.cn/npRrCM",
+"http://i2oo.cn/nstzA6",
+"http://i2oo.cn/nn4zNs",
+"http://i2oo.cn/naiyWP",
+"http://i2oo.cn/n3Lx8j",
+"http://i2oo.cn/n9Fxnn",
+"http://i2oo.cn/nBJAMR",
+"http://i2oo.cn/nU8vdm",
+"http://i2oo.cn/nNGuvf",
+"http://i2oo.cn/nEkuUT",
+"http://i2oo.cn/nHNt7o",
+"http://i2oo.cn/nJ51m9",
+"http://i2oo.cn/nLU1sV",
+"http://i2oo.cn/nMgiKq",
+"http://i2oo.cn/nPwqcB",
+"http://i2oo.cn/nQeFtX",
+"http://i2oo.cn/nS3Fw1",
+"http://i2oo.cn/nTcoTD",
+"http://i2oo.cn/nVa8jZ",
+"http://i2oo.cn/nW28ru",
+"http://i2oo.cn/nYhmJE",
+"http://i2oo.cn/nZYk2b",
+"http://i2oo.cn/nbpjiA",
+"http://i2oo.cn/ncWj9H",
+"http://i2oo.cn/ndz5Rd",
+"http://i2oo.cn/nC766y",
+"http://i2oo.cn/ngxgzK",
+"http://i2oo.cn/n5SgGC",
+"http://i2oo.cn/njvCZr",
+"http://i2oo.cn/nmQeqM",
+"http://i2oo.cn/n8tef6",
+"http://i2oo.cn/nF4dQs",
+"http://i2oo.cn/nqicgP",
+"http://i2oo.cn/n1Lbxj",
+"http://i2oo.cn/ntFbEn",
+"http://i2oo.cn/nvJ2XR",
+"http://i2oo.cn/nA8Zom",
+"http://i2oo.cn/nyGZaf",
+"http://i2oo.cn/nzkY4T",
+"http://i2oo.cn/apNXeo",
+"http://i2oo.cn/as5WA9",
+"http://i2oo.cn/anUWDV",
+"http://i2oo.cn/aagVVq",
+"http://i2oo.cn/a3w78B",
+"http://i2oo.cn/a9e7hX",
+"http://i2oo.cn/aB3TL1",
+"http://i2oo.cn/aUcSdD",
+"http://i2oo.cn/aNaRuZ",
+"http://i2oo.cn/aE2RBu",
+"http://i2oo.cn/aHhQ7E",
+"http://i2oo.cn/aJYPkb",
+"http://i2oo.cn/aLpPpA",
+"http://i2oo.cn/aMW4KH",
+"http://i2oo.cn/a4zMbd",
+"http://i2oo.cn/aQ7L1y",
+"http://i2oo.cn/aRxLwK",
+"http://i2oo.cn/aTSKSC",
+"http://i2oo.cn/a7vJjr",
+"http://i2oo.cn/aWQJrM",
+"http://i2oo.cn/aXtHH6",
+"http://i2oo.cn/aZ4G2s",
+"http://i2oo.cn/a2iEiP",
+"http://i2oo.cn/acLE3j",
+"http://i2oo.cn/adFNRn",
+"http://i2oo.cn/aCJD6R",
+"http://i2oo.cn/ag8Uym",
+"http://i2oo.cn/a5GUGf",
+"http://i2oo.cn/ajkBYT",
+"http://i2oo.cn/amNwFo",
+"http://i2oo.cn/a85wf9",
+"http://i2oo.cn/aFU9PV",
+"http://i2oo.cn/aqg3Cq",
+"http://i2oo.cn/a1wfxB",
+"http://i2oo.cn/atefNX",
+"http://i2oo.cn/av3aW1",
+"http://i2oo.cn/aAcnoD",
+"http://i2oo.cn/ayannZ",
+"http://i2oo.cn/az2hMu",
+"http://i2oo.cn/fphseE",
+"http://i2oo.cn/fsYpvb",
+"http://i2oo.cn/fnppUA",
+"http://i2oo.cn/faWrVH",
+"http://i2oo.cn/ffyzmd",
+"http://i2oo.cn/f9Tzsy",
+"http://i2oo.cn/fwAyLK",
+"http://i2oo.cn/fURxcC",
+"http://i2oo.cn/fDuAur",
+"http://i2oo.cn/fEPABM",
+"http://i2oo.cn/fG1vT6",
+"http://i2oo.cn/fJMuks",
+"http://i2oo.cn/fKqupP",
+"http://i2oo.cn/fMKtJj",
+"http://i2oo.cn/f4o1bn",
+"http://i2oo.cn/fQHi1R",
+"http://i2oo.cn/fRmi9m",
+"http://i2oo.cn/fTEqSf",
+"http://i2oo.cn/f7jF5T",
+"http://i2oo.cn/fWDozo",
+"http://i2oo.cn/fX6oH9",
+"http://i2oo.cn/rCHu9",
+"http://i2oo.cn/s9HBV",
+"http://i2oo.cn/hdGTq",
+"http://i2oo.cn/afEkB",
+"http://i2oo.cn/fbEpX",
+"http://i2oo.cn/9nNJ1",
+"http://i2oo.cn/wZDbD",
+"http://i2oo.cn/UsU1Z",
+"http://i2oo.cn/DXU9u",
+"http://i2oo.cn/ErBSE",
+"http://i2oo.cn/GVw5b",
+"http://i2oo.cn/Hy9zA",
+"http://i2oo.cn/KT9HH",
+"http://i2oo.cn/LA3Zd",
+"http://i2oo.cn/4Rfqy",
+"http://i2oo.cn/Puf3K",
+"http://i2oo.cn/RPaQC",
+"http://i2oo.cn/S1n6r",
+"http://i2oo.cn/7MhyM",
+"http://i2oo.cn/VqhE6",
+"http://i2oo.cn/XKsYs",
+"http://i2oo.cn/YopFP",
+"http://i2oo.cn/2Hpaj",
+"http://i2oo.cn/bmrPn",
+"http://i2oo.cn/dNzCR",
+"http://i2oo.cn/e5yAm",
+"http://i2oo.cn/gUyNf",
+"http://i2oo.cn/6gxWT",
+"http://i2oo.cn/jwA8o",
+"http://i2oo.cn/keAn9",
+"http://i2oo.cn/83vMV",
+"http://i2oo.cn/ocudq",
+"http://i2oo.cn/qatvB",
+"http://i2oo.cn/i2tUX",
+"http://i2oo.cn/th171",
+"http://i2oo.cn/uYimD",
+"http://i2oo.cn/ApisZ",
+"http://i2oo.cn/xWqKu",
+"http://i2oo.cn/yzFcE",
+"http://i2oo.cn/pr7otb",
+"http://i2oo.cn/ppxowA",
+"http://i2oo.cn/phS8TH",
+"http://i2oo.cn/pnvmjd",
+"http://i2oo.cn/pfQmry",
+"http://i2oo.cn/p3tkJK",
+"http://i2oo.cn/pw4j2C",
+"http://i2oo.cn/pBi51r",
+"http://i2oo.cn/pDL59M",
+"http://i2oo.cn/pNF6R6",
+"http://i2oo.cn/pGJg5s",
+"http://i2oo.cn/pH8CzP",
+"http://i2oo.cn/pKGCGj",
+"http://i2oo.cn/pLkeZn",
+"http://i2oo.cn/p4NdqR",
+"http://i2oo.cn/pP5dfm",
+"http://i2oo.cn/pRUcQf",
+"http://i2oo.cn/pSgbgT",
+"http://i2oo.cn/p7w2xo",
+"http://i2oo.cn/pVe2E9",
+"http://i2oo.cn/pX3ZXV",
+"http://i2oo.cn/pYcYoq",
+"http://i2oo.cn/p2aYaB",
+"http://i2oo.cn/pb2X4X",
+"http://i2oo.cn/pdhWe1",
+"http://i2oo.cn/peYVAD",
+"http://i2oo.cn/pgpVDZ",
+"http://i2oo.cn/p6W7Vu",
+"http://i2oo.cn/p5zT8E",
+"http://i2oo.cn/pk7Thb",
+"http://i2oo.cn/pmxSLA",
+"http://i2oo.cn/poSRdH",
+"http://i2oo.cn/pFvQud",
+"http://i2oo.cn/piQQBy",
+"http://i2oo.cn/p1tP7K",
+"http://i2oo.cn/pu44kC",
+"http://i2oo.cn/pvi4sr",
+"http://i2oo.cn/pxLMKM",
+"http://i2oo.cn/pyFLb6",
+"http://i2oo.cn/srJKts",
+"http://i2oo.cn/sp8KwP",
+"http://i2oo.cn/shGJSj",
+"http://i2oo.cn/snkHjn",
+"http://i2oo.cn/sfNHrR",
+"http://i2oo.cn/s35GHm",
+"http://i2oo.cn/swUE2f",
+"http://i2oo.cn/sBgNiT",
+"http://i2oo.cn/sDwN3o",
+"http://i2oo.cn/sNeDR9",
+"http://i2oo.cn/sG3U6V",
+"http://i2oo.cn/sHcByq",
+"http://i2oo.cn/sKaBGB",
+"http://i2oo.cn/sL2wYX",
+"http://i2oo.cn/s4h9F1",
+"http://i2oo.cn/sPY9fD",
+"http://i2oo.cn/sRp3PZ",
+"http://i2oo.cn/sSWfCu",
+"http://i2oo.cn/sTzaxE",
+"http://i2oo.cn/sV7aNb",
+"http://i2oo.cn/sWxnWA",
+"http://i2oo.cn/sYShoH",
+"http://i2oo.cn/sZvhnd",
+"http://i2oo.cn/sbQsMy",
+"http://i2oo.cn/sctpeK",
+"http://i2oo.cn/se4rvC",
+"http://i2oo.cn/sCirDr",
+"http://i2oo.cn/s6KzVM",
+"http://i2oo.cn/s5oym6",
+"http://i2oo.cn/skHyhs",
+"http://i2oo.cn/smmxLP",
+"http://i2oo.cn/soEAcj",
+"http://i2oo.cn/sFjvun",
+"http://i2oo.cn/siDvBR",
+"http://i2oo.cn/s16uTm",
+"http://i2oo.cn/suBtkf",
+"http://i2oo.cn/svCtpT",
+"http://i2oo.cn/sx91Jo",
+"http://i2oo.cn/sydib9",
+"http://i2oo.cn/hrfq1V",
+"http://i2oo.cn/hpbq9q",
+"http://i2oo.cn/hhnFSB",
+"http://i2oo.cn/hnZo5X",
+"http://i2oo.cn/hfs8z1",
+"http://i2oo.cn/h3X8HD",
+"http://i2oo.cn/hwrmZZ",
+"http://i2oo.cn/hBVkqu",
+"http://i2oo.cn/hUyk3E",
+"http://i2oo.cn/hNTjQb",
+"http://i2oo.cn/hEA5gA",
+"http://i2oo.cn/hHR6yH",
+"http://i2oo.cn/hJu6Ed",
+"http://i2oo.cn/hLPgXy",
+"http://i2oo.cn/hM1CFK",
+"http://i2oo.cn/hPMCaC",
+"http://i2oo.cn/hQqePr",
+"http://i2oo.cn/hSKdCM",
+"http://i2oo.cn/hTocA6",
+"http://i2oo.cn/hVHcNs",
+"http://i2oo.cn/hWmbWP",
+"http://i2oo.cn/hYE28j",
+"http://i2oo.cn/hZj2nn",
+"http://i2oo.cn/hbDZMR",
+"http://i2oo.cn/hc6Ydm",
+"http://i2oo.cn/heBXvf",
+"http://i2oo.cn/hCCXUT",
+"http://i2oo.cn/h69W7o",
+"http://i2oo.cn/h5dVm9",
+"http://i2oo.cn/hkfVsV",
+"http://i2oo.cn/hmb7Kq",
+"http://i2oo.cn/honTcB",
+"http://i2oo.cn/hFZStX",
+"http://i2oo.cn/hisSw1",
+"http://i2oo.cn/h1XRTD",
+"http://i2oo.cn/hurQjZ",
+"http://i2oo.cn/hvVQru",
+"http://i2oo.cn/hAyPJE",
+"http://i2oo.cn/hyT42b",
+"http://i2oo.cn/hzAMiA",
+"http://i2oo.cn/npRM9H",
+"http://i2oo.cn/nsuLRd",
+"http://i2oo.cn/nnPK6y",
+"http://i2oo.cn/na1JzK",
+"http://i2oo.cn/n3MJGC",
+"http://i2oo.cn/n9qHZr",
+"http://i2oo.cn/nBKGqM",
+"http://i2oo.cn/nUoGf6",
+"http://i2oo.cn/nNHEQs",
+"http://i2oo.cn/nEmNgP",
+"http://i2oo.cn/nHEDxj",
+"http://i2oo.cn/nJjDEn",
+"http://i2oo.cn/nLDUXR",
+"http://i2oo.cn/nM6Bom",
+"http://i2oo.cn/nPBBaf",
+"http://i2oo.cn/nQCw4T",
+"http://i2oo.cn/nS99eo",
+"http://i2oo.cn/nTd3A9",
+"http://i2oo.cn/nVf3DV",
+"http://i2oo.cn/nWbfVq",
+"http://i2oo.cn/nYna8B",
+"http://i2oo.cn/nZZahX",
+"http://i2oo.cn/nbsnL1",
+"http://i2oo.cn/ncXhdD",
+"http://i2oo.cn/nersuZ",
+"http://i2oo.cn/nCVsBu",
+"http://i2oo.cn/ngyp7E",
+"http://i2oo.cn/n5Trkb",
+"http://i2oo.cn/njArpA",
+"http://i2oo.cn/nmQzKH",
+"http://i2oo.cn/n8tybd",
+"http://i2oo.cn/nF4x1y",
+"http://i2oo.cn/nqixwK",
+"http://i2oo.cn/n1LASC",
+"http://i2oo.cn/ntFvjr",
+"http://i2oo.cn/nvJvrM",
+"http://i2oo.cn/nA8uH6",
+"http://i2oo.cn/nyGt2s",
+"http://i2oo.cn/nzk1iP",
+"http://i2oo.cn/apN13j",
+"http://i2oo.cn/as5iRn",
+"http://i2oo.cn/anUq6R",
+"http://i2oo.cn/aagFym",
+"http://i2oo.cn/a3wFGf",
+"http://i2oo.cn/a9eoYT",
+"http://i2oo.cn/aB38Fo",
+"http://i2oo.cn/aUc8f9",
+"http://i2oo.cn/aNamPV",
+"http://i2oo.cn/aE2kCq",
+"http://i2oo.cn/aHhjxB",
+"http://i2oo.cn/aJYjNX",
+"http://i2oo.cn/aLp5W1",
+"http://i2oo.cn/aMW6oD",
+"http://i2oo.cn/a4z6nZ",
+"http://i2oo.cn/aQ7gMu",
+"http://i2oo.cn/aRxCeE",
+"http://i2oo.cn/aTSevb",
+"http://i2oo.cn/a7veUA",
+"http://i2oo.cn/aWQdVH",
+"http://i2oo.cn/aXtcmd",
+"http://i2oo.cn/aZ4csy",
+"http://i2oo.cn/a2ibLK",
+"http://i2oo.cn/acL2cC",
+"http://i2oo.cn/adFZur",
+"http://i2oo.cn/aCJZBM",
+"http://i2oo.cn/ag8YT6",
+"http://i2oo.cn/a5GXks",
+"http://i2oo.cn/ajkXpP",
+"http://i2oo.cn/amNWJj",
+"http://i2oo.cn/a85Vbn",
+"http://i2oo.cn/aFU71R",
+"http://i2oo.cn/aqg79m",
+"http://i2oo.cn/a1wTSf",
+"http://i2oo.cn/ateS5T",
+"http://i2oo.cn/av3Rzo",
+"http://i2oo.cn/aAcRH9",
+"http://i2oo.cn/ayaQZV",
+"http://i2oo.cn/az2Pqq",
+"http://i2oo.cn/fphP3B",
+"http://i2oo.cn/fsY4QX",
+"http://i2oo.cn/fnpMg1",
+"http://i2oo.cn/faWLyD",
+"http://i2oo.cn/ffzLEZ",
+"http://i2oo.cn/f97KXu",
+"http://i2oo.cn/fwxJFE",
+"http://i2oo.cn/fUSJab",
+"http://i2oo.cn/fDvH4A",
+"http://i2oo.cn/fEQGCH",
+"http://i2oo.cn/fGtEAd",
+"http://i2oo.cn/fJ4EDy",
+"http://i2oo.cn/fKiNWK",
+"http://i2oo.cn/fMLD8C",
+"http://i2oo.cn/f4FDnr",
+"http://i2oo.cn/fQJUMM",
+"http://i2oo.cn/fR8Bd6",
+"http://i2oo.cn/fTGwvs",
+"http://i2oo.cn/f7kwUP",
+"http://i2oo.cn/fWN97j",
+"http://i2oo.cn/fX53mn",
+"http://i2oo.cn/rCdPn",
+"http://i2oo.cn/s9cCR",
+"http://i2oo.cn/hdbAm",
+"http://i2oo.cn/afbNf",
+"http://i2oo.cn/fb2WT",
+"http://i2oo.cn/9nZ8o",
+"http://i2oo.cn/wZZn9",
+"http://i2oo.cn/UsYMV",
+"http://i2oo.cn/DXXdq",
+"http://i2oo.cn/ErWvB",
+"http://i2oo.cn/GVWUX",
+"http://i2oo.cn/HyV71",
+"http://i2oo.cn/KT7mD",
+"http://i2oo.cn/LA7sZ",
+"http://i2oo.cn/4RTKu",
+"http://i2oo.cn/PuScE",
+"http://i2oo.cn/RPRtb",
+"http://i2oo.cn/S1RwA",
+"http://i2oo.cn/7MQTH",
+"http://i2oo.cn/VqPjd",
+"http://i2oo.cn/XKPry",
+"http://i2oo.cn/Yo4JK",
+"http://i2oo.cn/2HM2C",
+"http://i2oo.cn/bmL1r",
+"http://i2oo.cn/dEL9M",
+"http://i2oo.cn/ejKR6",
+"http://i2oo.cn/gDJ5s",
+"http://i2oo.cn/66HzP",
+"http://i2oo.cn/jBHGj",
+"http://i2oo.cn/kCGZn",
+"http://i2oo.cn/89EqR",
+"http://i2oo.cn/odEfm",
+"http://i2oo.cn/qfNQf",
+"http://i2oo.cn/ibDgT",
+"http://i2oo.cn/tnUxo",
+"http://i2oo.cn/uZUE9",
+"http://i2oo.cn/AsBXV",
+"http://i2oo.cn/xXwoq",
+"http://i2oo.cn/zrwaB",
+"http://i2oo.cn/prV94X",
+"http://i2oo.cn/ppy3e1",
+"http://i2oo.cn/phTfAD",
+"http://i2oo.cn/pnAfDZ",
+"http://i2oo.cn/pfRaVu",
+"http://i2oo.cn/p3un8E",
+"http://i2oo.cn/pwPnhb",
+"http://i2oo.cn/pB1hLA",
+"http://i2oo.cn/pDMsdH",
+"http://i2oo.cn/pNqpud",
+"http://i2oo.cn/pGKpBy",
+"http://i2oo.cn/pHor7K",
+"http://i2oo.cn/pKGzkC",
+"http://i2oo.cn/pLkzsr",
+"http://i2oo.cn/p4NyKM",
+"http://i2oo.cn/pP5xb6",
+"http://i2oo.cn/pRUAts",
+"http://i2oo.cn/pSgAwP",
+"http://i2oo.cn/p7wvSj",
+"http://i2oo.cn/pVeujn",
+"http://i2oo.cn/pX3urR",
+"http://i2oo.cn/pYctHm",
+"http://i2oo.cn/p2a12f",
+"http://i2oo.cn/pb2iiT",
+"http://i2oo.cn/pdhi3o",
+"http://i2oo.cn/peYqR9",
+"http://i2oo.cn/pgpF6V",
+"http://i2oo.cn/p6Woyq",
+"http://i2oo.cn/p5zoGB",
+"http://i2oo.cn/pk78YX",
+"http://i2oo.cn/pmxmF1",
+"http://i2oo.cn/poSmfD",
+"http://i2oo.cn/pFvkPZ",
+"http://i2oo.cn/piQjCu"
             };
         }
     }

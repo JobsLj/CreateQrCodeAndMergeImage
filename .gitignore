@@ -8,7 +8,6 @@ CreateQrCodeAndMergeImage/bin/Debug/CreateQrCodeAndMergeImage.pdb
 CreateQrCodeAndMergeImage/bin/Debug/CreateQrCodeAndMergeImage.vshost.exe
 CreateQrCodeAndMergeImage/bin/Debug/CreateQrCodeAndMergeImage.vshost.exe.config
 CreateQrCodeAndMergeImage/bin/Debug/CreateQrCodeAndMergeImage.vshost.exe.manifest
-CreateQrCodeAndMergeImage/bin/Debug/Pictures/background.jpg
 CreateQrCodeAndMergeImage/bin/Debug/QRCode.dll
 CreateQrCodeAndMergeImage/bin/Debug/RestSharp.dll
 CreateQrCodeAndMergeImage/bin/Debug/RestSharp.xml
@@ -21,3 +20,13 @@ CreateQrCodeAndMergeImage/obj/Debug/CreateQrCodeAndMergeImage.pdb
 CreateQrCodeAndMergeImage/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
 .nuget/NuGet.exe
 .nuget/NuGet.targets
+CreateQrCodeAndMergeImage/bin/Debug/UploadPic
+CreateQrCodeAndMergeImage/bin/Debug/Pictures/ProductWaterMark
+ObjectToObject/obj/Debug/ObjectToObject.csprojAssemblyReference.cache
+CreateQrCodeAndMergeImage/obj/Debug/CreateQrCodeAndMergeImage.csprojAssemblyReference.cache
+.vs/CreateQrCodeAndMergeImage/v15/Server/sqlite3/storage.ide-wal
+.vs/CreateQrCodeAndMergeImage/v15/Server/sqlite3/storage.ide-shm
+ObjectToObject/obj/Debug/ObjectToObject.csproj.CoreCompileInputs.cache
+CreateQrCodeAndMergeImage/obj/Debug/CreateQrCodeAndMergeImage.csproj.CoreCompileInputs.cache
+.vs/CreateQrCodeAndMergeImage/v15/Server/sqlite3/storage.ide
+.vs/CreateQrCodeAndMergeImage/v15/.suo
